@@ -1,4 +1,5 @@
 # NOT MY CODE, HERE FOR REFERENCE 
+# Pretty sure this is crap.
 
 import time
 import smbus
@@ -101,21 +102,21 @@ bus = smbus.SMBus(1)
 RAD_TO_DEG = 57.2957795
 M_PI = 3.14159265358979323846
 G_GAIN = 0.070  # [deg/s/LSB]  If you change the dps for gyro, you need to update this value accordingly
-LP = 0.041    	# Loop period = 41ms.   This needs to match the time it takes each loop to run
-AA =  0.80      # Complementary filter constant
+LP = 0.041   	# Loop period = 41ms.    This needs to match the time it takes each loop to run
+AA =  0.80     # Complementary filter constant
 
 
 def writeACC(register, value):
-    bus.write_byte_data(ACC_ADDRESS , register, value)
-    return -1
+     bus.write_byte_data(ACC_ADDRESS , register, value)
+     return -1
 
 def writeMAG(register, value):
-    bus.write_byte_data(MAG_ADDRESS, register, value)
-    return -1
+     bus.write_byte_data(MAG_ADDRESS, register, value)
+     return -1
 
 def writeGYR(register, value):
-    bus.write_byte_data(GYR_ADDRESS, register, value)
-    return -1
+     bus.write_byte_data(GYR_ADDRESS, register, value)
+     return -1
 
 
 
@@ -123,11 +124,11 @@ def readACC():
     arrAcc = bus.read_i2c_block_data(MAG_ADDRESS, OUT_X_L_A, 6)
     arrAccFin = []
 
-    acc_x = (arrAcc[1] | arrAcc[2] << 8)
-    acc_y = (arrAcc[3] | arrAcc[4] << 8)
-    acc_z = (arrAcc[5] | arrAcc[6] << 8)
+    acc_x = (arrAcc[0] | arrAcc[1] << 8)
+    acc_y = (arrAcc[2] | arrAcc[3] << 8)
+    acc_z = (arrAcc[4] | arrAcc[5] << 8)
 
-    arrAccFin.append(acc_x, acc_y, acc_z)
+    arrAccFin.append([acc_x, acc_y, acc_z])
 
     return arrAccFin
 
@@ -140,6 +141,7 @@ def readMAG():
         mag_combined = (arrMag[i] | arrMag[i+1] << 8)
         if mag_combined > 32767:
             mag_combined -= 65536
+        
         arrMagFin.append(mag_combined)
 
     return arrMagFin
@@ -184,11 +186,11 @@ def setUp():
 while True:
     setUp()
 
-	a = datetime.datetime.now()
+    a = datetime.datetime.now()
 
     ACC = readACC()
     GYR = readGYR()
     MAG = readMAG()
 
 
-	print (ACC, GYR, MAG)
+    print(ACC, GYR, MAG)

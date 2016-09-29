@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import RPi.GPIO as GPIO
 
-class motors:
+class motorSet:
     pinArray = []
     def __init__(self, pinArray):
         # Pass pin array to class
@@ -31,41 +31,51 @@ class motors:
             self.PWMLeft.start(100)
             self.PWMRight.start(100)
 
-
-
     # Functions for each wheel movement
-    def rightBack(self):
+    def go(self, lSpeed, rSpeed):
+        self.leftSpeed(lSpeed)
+        self.rightSpeed(rSpeed)
+
+    def rightBwd(self):
         GPIO.output(self.pinArray[0], True)
         GPIO.output(self.pinArray[1], False)
 
-    def rightFor(self):
+    def rightFwd(self):
         GPIO.output(self.pinArray[0], False)
         GPIO.output(self.pinArray[1], True)
 
-    def leftBack(self):
+    def leftBwd(self):
         GPIO.output(self.pinArray[2], True)
         GPIO.output(self.pinArray[3], False)
 
-    def leftFor(self):
+    def leftFwd(self):
         GPIO.output(self.pinArray[2], False)
         GPIO.output(self.pinArray[3], True)
 
     # End user functions
-    def spinCW(self):
-        self.leftFor()
-        self.rightBack()
+    def spinRight(self, speed):
+        self.setSpeed(speed)
 
-    def spinCCW(self):
-        self.leftBack()
-        self.rightFor()
+        self.leftFwd()
+        self.rightBwd()
 
-    def backw(self):
-        self.leftBack()
-        self.rightBack()
+    def spinLeft(self, speed):
+        self.setSpeed(speed)
 
-    def forw(self):
-        self.leftFor()
-        self.rightFor()
+        self.leftBwd()
+        self.rightFwd()
+
+    def bwd(self, speed):
+        self.setSpeed(speed)
+
+        self.leftBwd()
+        self.rightBwd()
+
+    def fwd(self, speed):
+        self.setSpeed(speed)
+
+        self.leftFwd()
+        self.rightFwd()
 
     def leftSpeed(self, speed):
         self.PWMLeft.ChangeDutyCycle(speed)
@@ -75,7 +85,7 @@ class motors:
 
     # Changing the duty cycle means the percentage of the freq that the pulse is HIGH for
     # Changes DC for both motors
-    def changeDC(self, duty=100):
+    def setSpeed(self, duty=100):
         self.leftSpeed(duty)
         self.rightSpeed(duty)
 
@@ -91,9 +101,9 @@ class motors:
             GPIO.output(self.pinArray[i], False)
 
     # Tidies and closes GPIO pin usage
-    def quit(self):
+    def cleanup(self):
         self.stop()
         self.PWMLeft.stop()
         self.PWMRight.stop()
         GPIO.cleanup()
-        print "Pins stopped and cleaned"
+        print("Pins stopped and cleaned")
